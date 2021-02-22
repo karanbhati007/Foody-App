@@ -1,6 +1,7 @@
 package com.ksb.foody.ui.fragments.recipes
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -8,21 +9,33 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.ksb.foody.MainViewModel
+import com.ksb.foody.viewmodeles.MainViewModel
 import com.ksb.foody.R
 import com.ksb.foody.adapters.RecipesAdapter
 import com.ksb.foody.databinding.FragmentRecipesBinding
 import com.ksb.foody.util.Constants
 import com.ksb.foody.util.NetworkResult
+import com.ksb.foody.util.observeOnce
+import com.ksb.foody.viewmodeles.RecipesViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class RecipesFragment : Fragment() {
+    private val TAG = "RecipesFragment"
 
     private lateinit var mainViewModel: MainViewModel
+    private lateinit var recipeViewModel: RecipesViewModel
     private lateinit var binding: FragmentRecipesBinding
     private val mAdapter by lazy { RecipesAdapter() }  //TODO Check out the use of Lazy
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        mainViewModel = ViewModelProvider(requireActivity()).get(MainViewModel::class.java)
+        recipeViewModel = ViewModelProvider(requireActivity()).get(RecipesViewModel::class.java)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -30,14 +43,28 @@ class RecipesFragment : Fragment() {
     ): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_recipes, container, false)
 
-        mainViewModel = ViewModelProvider(requireActivity()).get(MainViewModel::class.java)
         setUpRecyclerView()
-        requestApiData()
+        readDataBase()
         return binding.root
     }
 
+    private fun readDataBase() {
+        lifecycleScope.launch {
+            mainViewModel.readRecipes.observeOnce(viewLifecycleOwner, { database ->
+                if (database.isNotEmpty()) {
+                    Log.d(TAG, "readDataBase: ")
+                    mAdapter.setData(database[0].foodRecipe)
+                    hideShimmerEffect()
+                }else{
+                    requestApiData()
+                }
+            })
+        }
+    }
+
     private fun requestApiData() {
-        mainViewModel.getRecipes(applyQueries())
+        Log.d(TAG, "requestApiData: ")
+        mainViewModel.getRecipes(recipeViewModel.applyQueries())
 
         mainViewModel.recipesResponse.observe(viewLifecycleOwner, { response ->
             when (response) {
@@ -47,30 +74,30 @@ class RecipesFragment : Fragment() {
                 }
                 is NetworkResult.Error -> {
                     hideShimmerEffect()
+                   // loadDataFromCache()
                     Toast.makeText(
                         requireContext(),
                         response.message.toString(),
                         Toast.LENGTH_SHORT
                     ).show()
                 }
-                is NetworkResult.Loading->{
+                is NetworkResult.Loading -> {
                     showShimmerEffect()
                 }
             }
         })
     }
 
-//https://api.spoonacular.com/recipes/complexSearch?apiKey=00315fb0689f48c3a510fd04cbee6c6c&number=50&type=snack&diet=vegan&addRecipeInformation=true&fillIngredients=true
-    private fun applyQueries(): HashMap<String, String> {
-        val queries: HashMap<String, String> = HashMap()
-        queries["number"] = "50"
-        queries["apiKey"] = Constants.API_KEY
-        queries["type"] = "snack"
-        queries["diet"] = "vegan"
-        queries["addRecipeInformation"] = "true"
-        queries["fillIngredients"] = "true"
-        return queries
+    private fun loadDataFromCache(){
+        lifecycleScope.launch {
+            mainViewModel.readRecipes.observe(viewLifecycleOwner,{database->
+                mAdapter.setData(database[0].foodRecipe)
+            })
+        }
     }
+
+//https://api.spoonacular.com/recipes/complexSearch?apiKey=00315fb0689f48c3a510fd04cbee6c6c&number=50&type=snack&diet=vegan&addRecipeInformation=true&fillIngredients=true
+
 
     private fun setUpRecyclerView() {
         binding.recyclerView.adapter = mAdapter

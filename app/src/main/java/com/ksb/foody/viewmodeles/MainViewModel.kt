@@ -1,21 +1,19 @@
-package com.ksb.foody
+package com.ksb.foody.viewmodeles
 
 import android.app.Application
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
-import android.util.Log
 import androidx.hilt.lifecycle.ViewModelInject
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.ksb.foody.data.Repository
+import com.ksb.foody.data.room.RecipesEntity
 import com.ksb.foody.model.FoodRecipe
 import com.ksb.foody.util.NetworkResult
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.Response
 import java.lang.Exception
-import javax.inject.Inject
 
 
 class MainViewModel @ViewModelInject constructor(
@@ -25,6 +23,24 @@ class MainViewModel @ViewModelInject constructor(
     AndroidViewModel(application) {
 
     private val TAG = "MainViewModel"
+
+    /**LOCAL DATABASE*/
+
+    var readRecipes: LiveData<List<RecipesEntity>> = repository.local.readDataBase().asLiveData()
+
+    private fun insertRecipes(recipesEntity: RecipesEntity) =
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.local.insertRecipes(recipesEntity)
+        }
+
+
+    private fun offlineCacheRecipe(foodRecipe: FoodRecipe) {
+        val recipesEntity = RecipesEntity(foodRecipe)
+        insertRecipes(recipesEntity)
+    }
+
+
+    /** RETROFIT*/
 
     var recipesResponse: MutableLiveData<NetworkResult<FoodRecipe>> = MutableLiveData()
 
@@ -39,6 +55,11 @@ class MainViewModel @ViewModelInject constructor(
                 val response = repository.remote.getRecipes(queries)
 
                 recipesResponse.value = handleFoodRecipesResponse(response)
+
+                val foodRecipe = recipesResponse.value!!.data
+                if(foodRecipe!=null){
+                    offlineCacheRecipe(foodRecipe)
+                }
             } catch (e: Exception) {
                 recipesResponse.value = NetworkResult.Error("Recipes Not Found.")
             }
@@ -46,6 +67,7 @@ class MainViewModel @ViewModelInject constructor(
             recipesResponse.value = NetworkResult.Error("No Internet Connection !!")
         }
     }
+
 
     private fun handleFoodRecipesResponse(response: Response<FoodRecipe>): NetworkResult<FoodRecipe>? {
         when {
