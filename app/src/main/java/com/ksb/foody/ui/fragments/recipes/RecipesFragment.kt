@@ -10,6 +10,8 @@ import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ksb.foody.viewmodeles.MainViewModel
 import com.ksb.foody.R
@@ -26,9 +28,14 @@ import kotlinx.coroutines.launch
 class RecipesFragment : Fragment() {
     private val TAG = "RecipesFragment"
 
+    private var _binding: FragmentRecipesBinding? = null
+    private val binding get() = _binding!!
+
     private lateinit var mainViewModel: MainViewModel
     private lateinit var recipeViewModel: RecipesViewModel
-    private lateinit var binding: FragmentRecipesBinding
+
+    private val args by navArgs<RecipesFragmentArgs>()
+   // private lateinit var binding get() =
     private val mAdapter by lazy { RecipesAdapter() }  //TODO Check out the use of Lazy
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,17 +48,25 @@ class RecipesFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_recipes, container, false)
+        _binding = FragmentRecipesBinding.inflate(inflater,container,false)
+        // _binding = DataBindingUtil.inflate(inflater, R.layout.fragment_recipes, container, false)
+        binding.lifecycleOwner = this
+        binding.mainViewModel = mainViewModel
 
         setUpRecyclerView()
         readDataBase()
+
+        binding.recipesFab.setOnClickListener{
+            findNavController().navigate(R.id.action_recipesFragment_to_recipesBottomSheet)
+        }
+
         return binding.root
     }
 
     private fun readDataBase() {
         lifecycleScope.launch {
             mainViewModel.readRecipes.observeOnce(viewLifecycleOwner, { database ->
-                if (database.isNotEmpty()) {
+                if (database.isNotEmpty() && !args.backFromBottomSheet) {
                     Log.d(TAG, "readDataBase: ")
                     mAdapter.setData(database[0].foodRecipe)
                     hideShimmerEffect()
@@ -112,4 +127,10 @@ class RecipesFragment : Fragment() {
     private fun hideShimmerEffect() {
         binding.recyclerView.hideShimmer()
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
+    }
+
 }
