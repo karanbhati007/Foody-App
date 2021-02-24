@@ -2,11 +2,10 @@ package com.ksb.foody.ui.fragments.recipes
 
 import android.os.Bundle
 import android.util.Log
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.widget.SearchView
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -28,7 +27,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class RecipesFragment : Fragment() {
+class RecipesFragment : Fragment(), SearchView.OnQueryTextListener, SearchView.OnCloseListener {
     private val TAG = "RecipesFragment"
 
     private var _binding: FragmentRecipesBinding? = null
@@ -52,17 +51,19 @@ class RecipesFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentRecipesBinding.inflate(inflater,container,false)
+        _binding = FragmentRecipesBinding.inflate(inflater, container, false)
         // _binding = DataBindingUtil.inflate(inflater, R.layout.fragment_recipes, container, false)
         binding.lifecycleOwner = this
         binding.mainViewModel = mainViewModel
+
+        setHasOptionsMenu(true) // For Search Bar
 
         setUpRecyclerView()
         readDataBase()
 
         lifecycleScope.launch {
             networkListener = NetworkListener()
-            networkListener.checkNetworkAvailability(requireContext()).collect { status->
+            networkListener.checkNetworkAvailability(requireContext()).collect { status ->
                 Log.d(TAG, "Network Listener: $status")
                 recipeViewModel.networkStatus = status
                 recipeViewModel.showNetworkStatus(binding.root)
@@ -72,10 +73,10 @@ class RecipesFragment : Fragment() {
         Log.d(TAG, "onCreateView: HERE !!")
 
 
-        binding.recipesFab.setOnClickListener{
-            if(recipeViewModel.networkStatus){
+        binding.recipesFab.setOnClickListener {
+            if (recipeViewModel.networkStatus) {
                 findNavController().navigate(R.id.action_recipesFragment_to_recipesBottomSheet)
-            }else{
+            } else {
                 recipeViewModel.showNetworkStatus(binding.root)
             }
         }
@@ -90,7 +91,7 @@ class RecipesFragment : Fragment() {
                     Log.d(TAG, "readDataBase: ")
                     mAdapter.setData(database[0].foodRecipe)
                     hideShimmerEffect()
-                }else{
+                } else {
                     requestApiData()
                 }
             })
@@ -109,7 +110,7 @@ class RecipesFragment : Fragment() {
                 }
                 is NetworkResult.Error -> {
                     hideShimmerEffect()
-                   // loadDataFromCache()
+                    // loadDataFromCache()
                     Toast.makeText(
                         requireContext(),
                         response.message.toString(),
@@ -123,13 +124,41 @@ class RecipesFragment : Fragment() {
         })
     }
 
-    private fun loadDataFromCache(){
+    private fun loadDataFromCache() {
         lifecycleScope.launch {
-            mainViewModel.readRecipes.observe(viewLifecycleOwner,{database->
+            mainViewModel.readRecipes.observe(viewLifecycleOwner, { database ->
                 mAdapter.setData(database[0].foodRecipe)
             })
         }
     }
+
+
+    private fun searchApiData(searchQuery: String) {
+        showShimmerEffect()
+        mainViewModel.searchQueries(recipeViewModel.applySearchQuery(searchQuery))
+        mainViewModel.searchedRecipesResponse.observe(viewLifecycleOwner, { response ->
+            when (response) {
+                is NetworkResult.Success -> {
+                    hideShimmerEffect()
+                    val foodRecipe = response.data
+                    foodRecipe?.let { mAdapter.setData(it) }
+                }
+                is NetworkResult.Error -> {
+                    hideShimmerEffect()
+                    loadDataFromCache()
+                    Toast.makeText(
+                        requireContext(),
+                        response.message.toString(),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+                is NetworkResult.Loading -> {
+                    showShimmerEffect()
+                }
+            }
+        })
+    }
+
 
 // https://api.spoonacular.com/recipes/complexSearch?apiKey=00315fb0689f48c3a510fd04cbee6c6c&number=50&type=snack&diet=vegan&addRecipeInformation=true&fillIngredients=true
 
@@ -138,6 +167,32 @@ class RecipesFragment : Fragment() {
         binding.recyclerView.adapter = mAdapter
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
         showShimmerEffect()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.recipes_menu, menu)
+        val search = menu.findItem(R.id.menu_search)
+        val searchView = search.actionView as SearchView
+        searchView.isSubmitButtonEnabled = true
+        searchView.setOnQueryTextListener(this)
+        searchView.setOnCloseListener(this)
+    }
+
+
+    override fun onQueryTextSubmit(query: String?): Boolean {
+        if (query != null) {
+            searchApiData(query)
+        }
+        return true
+    }
+
+    override fun onQueryTextChange(newText: String?): Boolean {
+        return false
+    }
+
+    override fun onClose(): Boolean {
+        loadDataFromCache()
+        return false
     }
 
     private fun showShimmerEffect() {
@@ -152,5 +207,6 @@ class RecipesFragment : Fragment() {
         super.onDestroy()
         _binding = null
     }
+
 
 }
