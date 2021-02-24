@@ -18,10 +18,13 @@ import com.ksb.foody.R
 import com.ksb.foody.adapters.RecipesAdapter
 import com.ksb.foody.databinding.FragmentRecipesBinding
 import com.ksb.foody.util.Constants
+import com.ksb.foody.util.NetworkListener
 import com.ksb.foody.util.NetworkResult
 import com.ksb.foody.util.observeOnce
 import com.ksb.foody.viewmodeles.RecipesViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -34,8 +37,9 @@ class RecipesFragment : Fragment() {
     private lateinit var mainViewModel: MainViewModel
     private lateinit var recipeViewModel: RecipesViewModel
 
+    private lateinit var networkListener: NetworkListener
+
     private val args by navArgs<RecipesFragmentArgs>()
-   // private lateinit var binding get() =
     private val mAdapter by lazy { RecipesAdapter() }  //TODO Check out the use of Lazy
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,8 +60,24 @@ class RecipesFragment : Fragment() {
         setUpRecyclerView()
         readDataBase()
 
+        lifecycleScope.launch {
+            networkListener = NetworkListener()
+            networkListener.checkNetworkAvailability(requireContext()).collect { status->
+                Log.d(TAG, "Network Listener: $status")
+                recipeViewModel.networkStatus = status
+                recipeViewModel.showNetworkStatus(binding.root)
+            }
+        }
+
+        Log.d(TAG, "onCreateView: HERE !!")
+
+
         binding.recipesFab.setOnClickListener{
-            findNavController().navigate(R.id.action_recipesFragment_to_recipesBottomSheet)
+            if(recipeViewModel.networkStatus){
+                findNavController().navigate(R.id.action_recipesFragment_to_recipesBottomSheet)
+            }else{
+                recipeViewModel.showNetworkStatus(binding.root)
+            }
         }
 
         return binding.root
@@ -111,7 +131,7 @@ class RecipesFragment : Fragment() {
         }
     }
 
-//https://api.spoonacular.com/recipes/complexSearch?apiKey=00315fb0689f48c3a510fd04cbee6c6c&number=50&type=snack&diet=vegan&addRecipeInformation=true&fillIngredients=true
+// https://api.spoonacular.com/recipes/complexSearch?apiKey=00315fb0689f48c3a510fd04cbee6c6c&number=50&type=snack&diet=vegan&addRecipeInformation=true&fillIngredients=true
 
 
     private fun setUpRecyclerView() {
