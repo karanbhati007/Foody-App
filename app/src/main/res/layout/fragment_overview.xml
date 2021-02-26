@@ -39,13 +39,13 @@
 
         <TextView
             android:id="@+id/textView"
+            setNumberOfMinutes="@{result.readyInMinutes}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="12dp"
+            android:layout_marginEnd="16dp"
             android:layout_marginBottom="12dp"
-            setNumberOfMinutes="@{result.readyInMinutes}"
-            android:textColor="@color/white"
             android:text="100"
+            android:textColor="@color/white"
             android:textSize="16sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@+id/main_imageView"
@@ -63,12 +63,12 @@
 
         <TextView
             android:id="@+id/likes_textView"
+            setNumberOfLikes="@{result.aggregateLikes}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="12dp"
-            setNumberOfLikes="@{result.aggregateLikes}"
-            android:textColor="@color/white"
+            android:layout_marginEnd="14dp"
             android:text="100"
+            android:textColor="@color/white"
             android:textSize="16sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@+id/textView"

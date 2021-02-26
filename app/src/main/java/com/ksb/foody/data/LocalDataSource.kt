@@ -1,7 +1,7 @@
 package com.ksb.foody.data
 
 import com.ksb.foody.data.room.RecipesDao
-import com.ksb.foody.data.room.RecipesEntity
+import com.ksb.foody.data.room.entities.RecipesEntity
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 

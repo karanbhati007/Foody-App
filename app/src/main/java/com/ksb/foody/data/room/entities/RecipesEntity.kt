@@ -1,4 +1,4 @@
-package com.ksb.foody.data.room
+package com.ksb.foody.data.room.entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

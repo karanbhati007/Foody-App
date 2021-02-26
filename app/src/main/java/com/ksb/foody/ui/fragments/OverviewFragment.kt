@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import com.ksb.foody.R
 import com.ksb.foody.databinding.FragmentOverviewBinding
 import com.ksb.foody.model.Result
+import com.ksb.foody.util.Constants.Companion.RECIPE_RESULT_KEY
 
 
 class OverviewFragment : Fragment() {
@@ -21,7 +22,7 @@ class OverviewFragment : Fragment() {
         binding = FragmentOverviewBinding.inflate(inflater,container,false)
 
         val args = arguments
-        val myBundle: Result? = arguments?.getParcelable("recipeBundle")
+        val myBundle: Result? = arguments?.getParcelable(RECIPE_RESULT_KEY)
 
         if(myBundle!=null){
             binding.result = myBundle

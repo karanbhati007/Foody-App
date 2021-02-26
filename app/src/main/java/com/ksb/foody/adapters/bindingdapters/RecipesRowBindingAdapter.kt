@@ -14,8 +14,10 @@ import com.ksb.foody.R
 import com.ksb.foody.model.Result
 import com.ksb.foody.ui.fragments.recipes.RecipesFragmentArgs
 import com.ksb.foody.ui.fragments.recipes.RecipesFragmentDirections
+import com.ksb.foody.util.Constants
 import org.jsoup.Jsoup
 import java.lang.Exception
+import java.util.*
 
 class RecipesRowBindingAdapter {
 
@@ -80,6 +82,22 @@ class RecipesRowBindingAdapter {
                 val desc = Jsoup.parse(description).text()
                 textView.text = desc
             }
+        }
+
+        @BindingAdapter("loadIngredientesImage")
+        @JvmStatic
+        fun loadIngredientesImage(imageView: ImageView,ingredient: String){
+            val imageUrl = Constants.BASE_IMAGE_URL + ingredient
+            imageView.load(imageUrl){
+                crossfade(600)
+                error(R.drawable.ic_error_placeholder)
+            }
+        }
+
+        @BindingAdapter("capitaliseText")
+        @JvmStatic
+        fun capitaliseText(textView: TextView,text: String){
+                textView.text = text.capitalize(Locale.ROOT)
         }
 
 
