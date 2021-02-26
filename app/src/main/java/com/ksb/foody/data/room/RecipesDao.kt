@@ -1,9 +1,7 @@
 package com.ksb.foody.data.room
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
+import com.ksb.foody.data.room.entities.FavouritesEntity
 import com.ksb.foody.data.room.entities.RecipesEntity
 import kotlinx.coroutines.flow.Flow
 
@@ -15,5 +13,17 @@ interface RecipesDao {
 
     @Query("SELECT * FROM recipes_table ORDER BY id ASC")
     fun readRecipes(): Flow<List<RecipesEntity>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertFavRecipe(favouritesEntity: FavouritesEntity)
+
+    @Query("SELECT * FROM favourites_recipes_table ORDER BY id ASC")
+    fun readFavRecipe():Flow<List<FavouritesEntity>>
+
+    @Delete
+    suspend fun deleteFavRecipe(favouritesEntity: FavouritesEntity)
+
+    @Query("DELETE FROM favourites_recipes_table")
+    suspend fun deleteAllFavRecipe()
 
 }

@@ -7,6 +7,7 @@ import android.net.NetworkCapabilities
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import com.ksb.foody.data.Repository
+import com.ksb.foody.data.room.entities.FavouritesEntity
 import com.ksb.foody.data.room.entities.RecipesEntity
 import com.ksb.foody.model.FoodRecipe
 import com.ksb.foody.util.NetworkResult
@@ -26,12 +27,29 @@ class MainViewModel @ViewModelInject constructor(
 
     /**LOCAL DATABASE*/
 
-    var readRecipes: LiveData<List<RecipesEntity>> = repository.local.readDataBase().asLiveData()
+    var readRecipes: LiveData<List<RecipesEntity>> = repository.local.readRecipes().asLiveData()
+    var readFavRecipes: LiveData<List<FavouritesEntity>> =
+        repository.local.readFavRecipe().asLiveData()
+
 
     private fun insertRecipes(recipesEntity: RecipesEntity) =
         viewModelScope.launch(Dispatchers.IO) {
             repository.local.insertRecipes(recipesEntity)
         }
+
+     fun insertFavRecipe(favouritesEntity: FavouritesEntity) =
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.local.insertFavRecipe(favouritesEntity)
+        }
+
+    fun deleteFavRecipe(favouritesEntity: FavouritesEntity) =
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.local.deleteFavRecipe(favouritesEntity)
+        }
+
+    private fun deleteAllFavRecipe() = viewModelScope.launch(Dispatchers.IO) {
+        repository.local.deleteAllFavRecipes() 
+    }
 
 
     private fun offlineCacheRecipe(foodRecipe: FoodRecipe) {
@@ -78,7 +96,7 @@ class MainViewModel @ViewModelInject constructor(
                 recipesResponse.value = handleFoodRecipesResponse(response)
 
                 val foodRecipe = recipesResponse.value!!.data
-                if(foodRecipe!=null){
+                if (foodRecipe != null) {
                     offlineCacheRecipe(foodRecipe)
                 }
             } catch (e: Exception) {
