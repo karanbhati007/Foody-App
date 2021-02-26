@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="result"
             type="com.ksb.foody.model.Result" />
@@ -11,6 +12,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/recipesRowLayout"
+        onRecipeClickListener="@{result}"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
@@ -37,10 +39,10 @@
 
                 <ImageView
                     android:id="@+id/recipe_image_view"
+                    loadImageFromURL="@{result.image}"
                     android:layout_width="190dp"
                     android:layout_height="0dp"
                     android:scaleType="centerCrop"
-                    loadImageFromURL="@{result.image}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -72,7 +74,7 @@
                     android:layout_marginTop="12dp"
                     android:ellipsize="end"
                     android:maxLines="3"
-                    android:text="@{result.summary}"
+                    parseHtml="@{result.summary}"
                     android:textColor="@color/darkGray"
                     app:layout_constraintEnd_toEndOf="@+id/title_text_view"
                     app:layout_constraintStart_toStartOf="@+id/title_text_view"
@@ -115,21 +117,21 @@
 
                 <TextView
                     android:id="@+id/clock_textView"
+                    setNumberOfMinutes="@{result.readyInMinutes}"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="24dp"
-                    android:textColor="@color/yellow"
                     android:text="100"
-                    setNumberOfMinutes="@{result.readyInMinutes}"
                     android:textAlignment="center"
+                    android:textColor="@color/yellow"
                     app:layout_constraintStart_toEndOf="@+id/heart_textView"
                     app:layout_constraintTop_toBottomOf="@+id/clock_imageView" />
 
                 <ImageView
                     android:id="@+id/leaf_imageView"
+                    setVeganColor="@{result.vegan}"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    setVeganColor="@{result.vegan}"
                     app:layout_constraintEnd_toEndOf="@+id/leaf_textView"
                     app:layout_constraintStart_toStartOf="@+id/leaf_textView"
                     app:layout_constraintTop_toTopOf="@+id/clock_imageView"
@@ -137,11 +139,11 @@
 
                 <TextView
                     android:id="@+id/leaf_textView"
+                    setVeganColor="@{result.vegan}"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="24dp"
                     android:text="Vegan"
-                    setVeganColor="@{result.vegan}"
                     android:textAlignment="center"
                     app:layout_constraintStart_toEndOf="@+id/clock_textView"
                     app:layout_constraintTop_toBottomOf="@+id/leaf_imageView" />

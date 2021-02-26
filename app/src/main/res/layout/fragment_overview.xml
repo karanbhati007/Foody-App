@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="result"
+            type="com.ksb.foody.model.Result" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/time_textView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".ui.fragments.OverviewFragment">
+
+
+        <ImageView
+            android:id="@+id/main_imageView"
+            android:layout_width="0dp"
+            android:layout_height="250dp"
+            android:scaleType="centerCrop"
+            loadImageFromURL="@{result.image}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@tools:sample/avatars" />
+
+        <View
+            android:id="@+id/gradient_overlay"
+            android:layout_width="0dp"
+            android:layout_height="100dp"
+            android:background="@drawable/gradient_overlay"
+            app:layout_constraintBottom_toBottomOf="@+id/main_imageView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="12dp"
+            android:layout_marginBottom="12dp"
+            setNumberOfMinutes="@{result.readyInMinutes}"
+            android:textColor="@color/white"
+            android:text="100"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/main_imageView"
+            app:layout_constraintEnd_toEndOf="@+id/gradient_overlay" />
+
+        <ImageView
+            android:id="@+id/time_imageVIew"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_clock"
+            app:layout_constraintBottom_toTopOf="@+id/textView"
+            app:layout_constraintEnd_toEndOf="@+id/textView"
+            app:layout_constraintStart_toStartOf="@+id/textView"
+            app:tint="@color/white" />
+
+        <TextView
+            android:id="@+id/likes_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="12dp"
+            setNumberOfLikes="@{result.aggregateLikes}"
+            android:textColor="@color/white"
+            android:text="100"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/textView"
+            app:layout_constraintEnd_toStartOf="@+id/textView" />
+
+        <ImageView
+            android:id="@+id/likes_imageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="12dp"
+            android:src="@drawable/ic_heart"
+            app:layout_constraintBottom_toTopOf="@+id/likes_textView"
+            app:layout_constraintEnd_toStartOf="@+id/time_imageVIew"
+            app:layout_constraintStart_toStartOf="@+id/likes_textView"
+            app:tint="@color/white" />
+
+        <TextView
+            android:id="@+id/title_textView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="12dp"
+            android:fontFamily="@font/courgette"
+            android:text="@{result.title}"
+            android:textColor="@color/darkGray"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.49"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/main_imageView" />
+
+        <ImageView
+            android:id="@+id/vegetarian_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:src="@drawable/ic_check"
+            setVeganColor="@{result.vegetarian}"
+            app:layout_constraintStart_toStartOf="@+id/title_textView"
+            app:layout_constraintTop_toBottomOf="@+id/title_textView"
+            app:tint="@color/darkGray" />
+
+        <TextView
+            android:id="@+id/vegetarian_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="@string/vegetarian"
+            setVeganColor="@{result.vegetarian}"
+            android:textColor="@color/darkGray"
+            app:layout_constraintBottom_toBottomOf="@+id/vegetarian_iv"
+            app:layout_constraintStart_toEndOf="@+id/vegetarian_iv"
+            app:layout_constraintTop_toTopOf="@+id/vegetarian_iv" />
+
+        <ImageView
+            android:id="@+id/vegan_im"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:src="@drawable/ic_check"
+            setVeganColor="@{result.vegan}"
+            app:layout_constraintStart_toStartOf="@+id/vegetarian_iv"
+            app:layout_constraintTop_toBottomOf="@+id/vegetarian_iv"
+            app:tint="@color/darkGray" />
+
+        <TextView
+            android:id="@+id/vegan_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="@string/vegan"
+            android:textColor="@color/darkGray"
+            setVeganColor="@{result.vegan}"
+            app:layout_constraintBottom_toBottomOf="@+id/vegan_im"
+            app:layout_constraintStart_toEndOf="@+id/vegan_im"
+            app:layout_constraintTop_toTopOf="@+id/vegan_im" />
+
+        <ImageView
+            android:id="@+id/gluten_free_im"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:src="@drawable/ic_check"
+            setVeganColor="@{result.glutenFree}"
+            app:layout_constraintBottom_toBottomOf="@+id/vegetarian_tv"
+            app:layout_constraintStart_toEndOf="@+id/vegetarian_tv"
+            app:layout_constraintTop_toTopOf="@+id/vegetarian_tv"
+            app:tint="@color/darkGray" />
+
+        <TextView
+            android:id="@+id/gluten_free_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="@string/gluten_free"
+            setVeganColor="@{result.glutenFree}"
+            android:textColor="@color/darkGray"
+            app:layout_constraintBottom_toBottomOf="@+id/gluten_free_im"
+            app:layout_constraintStart_toEndOf="@+id/gluten_free_im"
+            app:layout_constraintTop_toTopOf="@+id/gluten_free_im" />
+
+        <ImageView
+            android:id="@+id/dairy_free_im"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:src="@drawable/ic_check"
+            setVeganColor="@{result.dairyFree}"
+            app:layout_constraintStart_toStartOf="@+id/gluten_free_im"
+            app:layout_constraintTop_toBottomOf="@+id/gluten_free_im"
+            app:tint="@color/darkGray" />
+
+        <TextView
+            android:id="@+id/dairy_free_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="@string/dairy_free"
+            android:textColor="@color/darkGray"
+            setVeganColor="@{result.dairyFree}"
+            app:layout_constraintBottom_toBottomOf="@+id/dairy_free_im"
+            app:layout_constraintStart_toEndOf="@+id/dairy_free_im"
+            app:layout_constraintTop_toTopOf="@+id/dairy_free_im" />
+
+        <ImageView
+            android:id="@+id/healthy_im"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:src="@drawable/ic_check"
+            android:tint="@color/darkGray"
+            setVeganColor="@{result.veryHealthy}"
+            app:layout_constraintBottom_toBottomOf="@+id/gluten_free_tv"
+            app:layout_constraintStart_toEndOf="@+id/gluten_free_tv"
+            app:layout_constraintTop_toTopOf="@+id/gluten_free_tv"
+            app:tint="@color/darkGray"
+            tools:ignore="UseAppTint" />
+
+        <TextView
+            android:id="@+id/healthy_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="@string/healthy"
+            android:textColor="@color/darkGray"
+            setVeganColor="@{result.veryHealthy}"
+            app:layout_constraintBottom_toBottomOf="@+id/healthy_im"
+            app:layout_constraintStart_toEndOf="@+id/healthy_im"
+            app:layout_constraintTop_toTopOf="@+id/healthy_im" />
+
+        <ImageView
+            android:id="@+id/cheap_im"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:src="@drawable/ic_check"
+            setVeganColor="@{result.cheap}"
+            app:layout_constraintEnd_toEndOf="@+id/healthy_im"
+            app:layout_constraintStart_toStartOf="@+id/healthy_im"
+            app:layout_constraintTop_toBottomOf="@+id/healthy_im"
+            app:tint="@color/darkGray" />
+
+        <TextView
+            android:id="@+id/cheap_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="@string/cheap"
+            android:textColor="@color/darkGray"
+            setVeganColor="@{result.cheap}"
+            app:layout_constraintBottom_toBottomOf="@+id/cheap_im"
+            app:layout_constraintStart_toEndOf="@+id/cheap_im"
+            app:layout_constraintTop_toTopOf="@+id/cheap_im" />
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="12dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/dairy_free_tv"
+            app:layout_constraintVertical_bias="1.0">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/summary_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/darkGray"
+                    android:alpha="0.8"
+                    parseHtml="@{result.summary}"
+                    android:textSize="16sp" />
+
+            </LinearLayout>
+        </ScrollView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

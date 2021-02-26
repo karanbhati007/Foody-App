@@ -21,4 +21,6 @@
     <color name="uncheckedChipBackgroundColor">@color/lightGray</color>
     <color name="checkedChipTextColor">@color/purple</color>
     <color name="unCheckedChipTextColor">@color/darkGray</color>
+
+    <color name="actionBarBackgroundColor">@color/purple</color>
 </resources>
