@@ -22,7 +22,7 @@ import java.util.*
 class RecipesRowBindingAdapter {
 
     companion object {
-        private val TAG = "RecipesRowBindingAdapte"
+        private val TAG = "RecipesRowBindingAdapter"
 
         @BindingAdapter("onRecipeClickListener")
         @JvmStatic
