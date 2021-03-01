@@ -85,7 +85,7 @@ class RecipesViewModel @ViewModelInject constructor(
         } else {
             // No need for try and catch, but for safety
             if (backOnline)
-                networkMessage("Internet Connection is Back.", view)
+                networkMessage("Internet Connection is back.", view)
         }
     }
 
