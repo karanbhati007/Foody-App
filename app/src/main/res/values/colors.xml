@@ -16,20 +16,36 @@
     <color name="yellow">#FFC114</color>
     <color name="green">#00C980</color>
 
+
+    <!-- Light Theme-->
+
+    <color name="backgroundColor">@color/lightGray</color>
+    <color name="placeHolderColor">@color/mediumGray</color>
+    <color name="itemColor">@color/darker</color>
+
     <!--    Custom Chip Style-->
     <color name="checkedChipBackgroundColor">#206200EA</color>
     <color name="uncheckedChipBackgroundColor">@color/lightGray</color>
     <color name="checkedChipTextColor">@color/purple</color>
     <color name="unCheckedChipTextColor">@color/darkGray</color>
 
-    <color name="actionBarBackgroundColor">@color/purple</color>
-    
+    <!--Custom CardView Style-->
     <color name="strokeColor">@color/lightMediumGray</color>
     <color name="cardBackgroundColor">@color/white</color>
     <color name="titleColor">@color/darker</color>
+    <color name="descriptionColor">@color/darkGray</color>
 
     <color name="statusBarColor">@color/purpleDark</color>
     <color name="contextualStatusBarColor">@color/darker</color>
     <color name="contextualActionBarColor">@color/dark</color>
     <color name="cardBackgroundLightColor">#106200EA</color>
+
+    <color name="actionBarBackgroundColor">@color/purple</color>
+
+    <!--BottomNavBar Color-->
+    <color name="bottomNavBackground">@color/white</color>
+    <color name="bottomNavItemCheckedColor">@color/purple</color>
+    <color name="bottomNavItemUnCheckedColor">@color/darkGray</color>
+
+
 </resources>
